@@ -8,7 +8,7 @@ from random import choice
 
 import time
 
-from ircbot.ircbot import (
+from ircbot import (
     IRCBot,
     response,
     command,
