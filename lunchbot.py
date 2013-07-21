@@ -4,6 +4,8 @@ from datetime import (
     timedelta,
 )
 
+from util import parse_time, format_timedelta
+
 from random import choice
 
 import time
@@ -35,17 +37,16 @@ class LunchBot(IRCBot):
     def add_timer(self, channel, user, message):
         """ Add a timer"""
         when, sep, msg = message.partition(' ')
-        try:
-            when = int(when)
-        except ValueError, TypeError:
-            return "'%s' is not an integer" % (when,)
+        delta = parse_time(when)
+        if delta is None:
+            return "'%s' does not parse as a time" % (when,)
 
         if msg in self.timers[user]:
             return "there is already a timer for %s" % (msg,)
 
         end = "timer for " + choice(["%s is done", "%s is ready", "%s is finished"]) % msg
 
-        end_time = datetime.now()+timedelta(minutes=when)
+        end_time = datetime.now()+delta
         end_ts = time.mktime(end_time.timetuple())
 
         def response():
@@ -54,15 +55,15 @@ class LunchBot(IRCBot):
 
         cb = self.io_loop.add_timeout(end_ts, response)
         self.timers[user][msg] = (cb, end_ts)
-        return "okay! starting %d minute timer for %s." % (when, msg)
+        return "okay! starting %s timer for %s." % (format_timedelta(delta), msg)
 
     @command(trigger='list')
     def list_timers(self, channel, user, message):
         """List all your timers"""
         s = []
         for msg, (cb, end_time) in self.timers[user].iteritems():
-            done = int(end_time - time.time())
-            out = "%s in %02d:%02d" % (msg, done / 60, done % 60)
+            done = timedelta(seconds=int(end_time - time.time()))
+            out = "%s in %s" % (msg, format_timedelta(done))
             s.append(out)
         if s:
             return 'you have the following timers: %s' % (', '.join(s),)
