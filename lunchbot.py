@@ -45,8 +45,10 @@ class LunchBot(IRCBot):
             return "there is already a timer for %s" % (msg,)
 
         end = "timer for " + choice(["%s is done", "%s is ready", "%s is finished"]) % msg
-
-        end_time = datetime.now()+delta
+        try:
+            end_time = datetime.now()+delta
+        except:
+            return "Invalid date. Stop that."
         end_ts = time.mktime(end_time.timetuple())
 
         def response():
