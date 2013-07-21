@@ -66,9 +66,10 @@ class LunchBot(IRCBot):
         for msg, (cb, end_time) in self.timers[user].iteritems():
             done = timedelta(seconds=int(end_time - time.time()))
             out = "%s in %s" % (msg, format_timedelta(done))
-            s.append(out)
+            s.append((done, out))
         if s:
-            return 'you have the following timers: %s' % (', '.join(s),)
+            out = [e[1] for e in sorted(s, key=lambda e:e[0])]
+            return 'you have the following timers: %s' % (', '.join(out),)
         else:
             return 'you have no timers running.'
 
