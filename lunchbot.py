@@ -25,6 +25,10 @@ class LunchBot(IRCBot):
     def botsnack(self, channel, user, message):
         return choice([":)", ":3", "thanks!", "tasty!"])
 
+    @response(trigger='botsmack')
+    def botsmack(self, channel, user, message):
+        return choice(["Leave me alone! :(", "What did I ever do to you? :'(", "Why would you do such a terrible thing? ;-;"])
+
     @response(trigger='<3')
     def heart(self, channel, user, message):
         return '<3'
