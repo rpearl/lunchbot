@@ -4,6 +4,8 @@ from datetime import (
     timedelta,
 )
 
+import json
+
 from util import parse_time, format_timedelta
 
 from random import choice
@@ -89,5 +91,8 @@ class LunchBot(IRCBot):
 
 
 if __name__ == '__main__':
-    c = LunchBot('cslunchbot', owner='rpearl')
-    c.start("irc.freenode.net", 6667, channels=["#cslunch"])
+	with open('bot.json') as f:
+		config = json.load(f)
+	c = LunchBot(config['name'], owner=config['owner'])
+	server = config['server']
+	c.start(server['host'], server['port'], channels=server['channels'])
