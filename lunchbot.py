@@ -4,7 +4,7 @@ from datetime import (
     timedelta,
 )
 
-import json
+import yaml
 
 from util import parse_time, format_timedelta
 
@@ -91,8 +91,8 @@ class LunchBot(IRCBot):
 
 
 if __name__ == '__main__':
-	with open('bot.json') as f:
-		config = json.load(f)
-	c = LunchBot(config['name'], owner=config['owner'])
-	server = config['server']
-	c.start(server['host'], server['port'], channels=server['channels'])
+    with open('bot.yaml') as f:
+        config = yaml.load(f)
+    c = LunchBot(config['name'], owner=config['owner'])
+    server = config['server']
+    c.start(server['host'], server['port'], channels=server['channels'])
